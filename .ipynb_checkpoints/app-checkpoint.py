@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # Define CSV path
-csv_path = os.path.join(os.getcwd(), "MERGED_FOOD_DATA_WITH_GRAMS.csv")
+csv_path = r"D:\Project food Genie\MERGED_FOOD_DATA_WITH_GRAMS.csv"
 
 # Load CSV data
 df = pd.read_csv(csv_path, encoding="utf-8")
