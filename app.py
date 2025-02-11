@@ -2,10 +2,10 @@ from flask import Flask, render_template, request
 import pandas as pd
 import os
 
-# Initialize Flask app and set the correct template folder path
+# Explicitly set the correct template folder path
 app = Flask(__name__, template_folder="backend/templates")
 
-# Define CSV path (Ensure the file is correctly placed)
+# Define CSV path
 csv_path = os.path.join(os.getcwd(), "MERGED_FOOD_DATA_WITH_GRAMS.csv")
 
 # Check if the CSV file exists
@@ -14,10 +14,6 @@ if not os.path.exists(csv_path):
 
 # Load CSV data
 df = pd.read_csv(csv_path, encoding="utf-8")
-
-# Get actual column names
-actual_columns = df.columns.tolist()
-app.logger.info(f"📊 Actual Column Names in CSV: {actual_columns}")
 
 # Determine the correct column name for food items
 if "food_name" in df.columns:
@@ -38,7 +34,7 @@ def index():
 
     return render_template("index.html", results=results)
 
-# Run the Flask app using Waitress in production
+# Run Flask app using Waitress
 if __name__ == "__main__":
     from waitress import serve
     serve(app, host="0.0.0.0", port=5000)
