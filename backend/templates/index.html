@@ -6,7 +6,6 @@
     <title>Food Genie</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-
         body {
             font-family: Arial, sans-serif;
             background-image: url('https://i.postimg.cc/4dxxsHp1/DALL-E-2024-12-03-13-02-33-A-high-resolution-visually-appealing-background-image-featuring-a-vari.webp');
@@ -19,23 +18,16 @@
             height: 100vh;
             margin: 0;
         }
-
         .container {
             text-align: center;
             background-color: rgba(255, 255, 255, 0.9);
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-            width: 50%;
-            max-width: 500px;
-            animation: fadeIn 1.2s ease-in-out;
+            max-width: 600px;
+            width: 90%;
+            overflow: hidden;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         .title {
             font-size: 4em;
             color: #ff6f00;
@@ -43,112 +35,107 @@
             font-family: 'Pacifico', cursive;
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
         }
-
         .quote {
             font-size: 1.5em;
             color: #666;
-            margin-bottom: 30px;
-            font-style: italic;
+            margin-bottom: 20px;
         }
-
         .search-bar {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            margin-top: 20px;
         }
-
         input[type="text"] {
             width: 70%;
             padding: 15px;
             font-size: 1.2em;
             border: 2px solid #ff6f00;
-            border-radius: 5px;
-            outline: none;
-            transition: 0.3s;
+            border-radius: 25px;
+            text-align: center;
         }
-
-        input[type="text"]:focus {
-            border-color: #e65c00;
-            box-shadow: 0 0 10px rgba(230, 92, 0, 0.5);
-        }
-
         button {
             padding: 15px 25px;
             font-size: 1.2em;
-            color: #fff;
-            background-color: #ff6f00;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #ff6f00, #ff9000);
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.3s ease-in-out;
         }
-
         button:hover {
-            background-color: #e65c00;
+            background: linear-gradient(135deg, #ff9000, #ff6f00);
+            transform: scale(1.05);
         }
-
-        #loading {
-            display: none;
+        .results {
             margin-top: 20px;
-            font-size: 1.2em;
-            color: #ff6f00;
-        }
-
-        #results {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .result-item {
-            background-color: rgba(255, 111, 0, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 5px;
             font-size: 1.2em;
             color: #333;
-            animation: slideIn 0.5s ease-in-out;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #ff6f00;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            text-align: left;
+            font-weight: bold;
         }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .results ul {
+            list-style: none;
+            padding: 0;
+        }
+        .results li {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .food-name {
+            font-weight: bold;
+            color: #ff6f00;
+        }
+        .calories {
+            color: #333;
+            font-style: italic;
+        }
+        .nutrition {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="title">Food Genie</div>
-        <div class="quote">"Bringing magic to your meals, one dish at a time."</div>
-
-        <form action="/" method="post" id="searchForm">
+        <div class="quote">"Genie says: The lightest choices first! ✨🔽"</div>
+        <form method="POST">
             <div class="search-bar">
-                <input type="text" name="query" id="searchInput" placeholder="What are you craving today?" required>
+                <input type="text" name="query" placeholder="What are you craving today?" required>
                 <button type="submit">Search</button>
             </div>
         </form>
 
-        <div id="loading">Searching... Please wait.</div>
+        {% if message %}
+            <p class="results"><strong>{{ message }}</strong></p>
+        {% endif %}
 
-        {% if query %}
-            <h2>Results for "{{ query }}"</h2>
-            <div id="results">
-                {% if results is not none and results|length > 0 %}
-                    {% for result in results.iterrows() %}
-                        <div class="result-item">{{ result[1][food_column] }}</div>
+        {% if results is not none and not results.empty %}
+            <div class="results">
+                <h3>🔍 Search Results:</h3>
+                <ul>
+                    {% for _, row in results.iterrows() %}
+                        <li>
+                            <span class="food-name">{{ row.food }}</span>
+                            <span class="calories">{{ row["Caloric Value"] }} kcal</span>
+                            <div class="nutrition">
+                                🥩 Protein: {{ row.Protein }}g | 🍞 Carbs: {{ row.Carbohydrates }}g | 🥑 Fat: {{ row.Fat }}g
+                            </div>
+                        </li>
                     {% endfor %}
-                {% else %}
-                    <p>No results found. Try another search.</p>
-                {% endif %}
+                </ul>
             </div>
         {% endif %}
     </div>
-
-    <script>
-        document.getElementById("searchForm").addEventListener("submit", function() {
-            document.getElementById("loading").style.display = "block";
-        });
-    </script>
 </body>
 </html>
